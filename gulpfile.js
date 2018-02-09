@@ -260,7 +260,42 @@ gulp.task("compileNode", ["compilePS"], function(cb){
         .pipe(ts)
         .pipe(gulp.dest(path.join(_buildRoot, 'Extensions')))
         .on('error', errorHandler);
+
+    // Generate loc files 
+    createResjson(cb);
 })
+
+function createResjson(callback) {
+    try {
+        var allMessagesJson = shell.find(path.join(__dirname, 'Extensions'))
+            .filter(function (file) {
+                return file.match(/(\/|\\)messages\.json$/);
+            });
+
+        allMessagesJson.forEach(function (messagesJson) {
+            console.log('Generating resJson for ' + messagesJson);
+
+            var resources = {};
+            var messagesDef = require(messagesJson);
+
+            if (messagesDef.hasOwnProperty('messages')) {
+                Object.keys(messagesDef.messages).forEach(function (key) {
+                    resources['loc.messages.' + key] = messagesDef.messages[key];
+                });
+
+                var extendionPath = path.dirname(messagesJson);
+                var resjsonPath = path.join(extendionPath, 'Strings', 'resources.resjson', 'en-US', 'resources.resjson');
+                shell.mkdir('-p', path.dirname(resjsonPath));
+                fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2));
+            }
+        });   
+    }
+    catch (err) {
+        console.log('error:' + err.message);
+        callback(new gutil.PluginError('compileTasks', err.message));
+        throw err;
+    }
+}
 
 function runNpmInstall(packagePath) {
     var originalDir = shell.pwd();

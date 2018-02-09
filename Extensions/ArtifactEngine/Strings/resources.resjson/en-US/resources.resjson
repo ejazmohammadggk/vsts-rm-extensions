@@ -1,0 +1,3 @@
+{
+  "loc.messages.downloadSummary": "Total Files: {0}, Processed: {1}, Skipped: {2}, Failed: {3}, Download time: {4} secs, Download size: {5}"
+}

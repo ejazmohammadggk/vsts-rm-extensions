@@ -15,6 +15,8 @@ import { TicketState } from '../Models/ticketState';
 export class ArtifactEngine {
     processItems(sourceProvider: models.IArtifactProvider, destProvider: models.IArtifactProvider, artifactEngineOptions?: ArtifactEngineOptions): Promise<models.ArtifactDownloadTicket[]> {
         var artifactDownloadTicketsPromise = new Promise<models.ArtifactDownloadTicket[]>((resolve, reject) => {
+            tl.setResourcePath(path.join(path.dirname(__dirname), 'messages.json'));
+            
             const workers: Promise<void>[] = [];
             artifactEngineOptions = artifactEngineOptions || new ArtifactEngineOptions();
             this.createPatternList(artifactEngineOptions);
